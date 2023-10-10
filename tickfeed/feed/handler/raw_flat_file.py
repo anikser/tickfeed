@@ -38,7 +38,7 @@ class RawFlatFileWriter:
     # Can make this generic across different data types
     async def __call__(self, data: Ticker, timestamp_received: float):
         date = datetime.utcfromtimestamp(data.timestamp).date()
-        file_meta = self._get_file(data.exchange, data.symbol, date)
+        file_meta = await self._get_file(data.exchange, data.symbol, date)
         # If we crash without exiting gracefully, the file may be left in a bad state (e.g. mid-way through a row).
         # Consider implementing a recovery mechanism.
         async with file_meta.lock:
@@ -57,7 +57,7 @@ class RawFlatFileWriter:
                 file_meta.file.flush()
                 file_meta.file.close()
 
-    def _get_file(self, exchange: str, symbol: str, date: date) -> FileWriterMeta:
+    async def _get_file(self, exchange: str, symbol: str, date: date) -> FileWriterMeta:
         key = FileKey(exchange, symbol, date)
         cache_key = FileWriterKey(exchange, symbol)
         if cache_key not in self._files:
@@ -69,7 +69,7 @@ class RawFlatFileWriter:
                 file_meta.file.flush()
                 file_meta.file.close()
                 if self._daily_file_callback:
-                    self._daily_file_callback(key)
+                    await self._daily_file_callback(key)
                 file_meta = self._open_file(key, cache_key)
             return file_meta
 

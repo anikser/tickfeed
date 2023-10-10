@@ -10,8 +10,8 @@
 
 ## Setup
 
-1. Execute the sql files in `ddl/`` in Postgres.
-2. Configure postgres connectivity in `postgres_cfg`` in `tickfeed/aggregation/daily/dao.py`. 
+1. Execute the sql files in `ddl/` in Postgres.
+2. Configure postgres connectivity in `postgres_cfg` in `tickfeed/aggregation/daily/dao.py`. 
     - Proper practice would be to move this out to a config file (e.g. JSON, YAML, TOML), and pass the path in as a command line argument. The password should not be checked in, and should integrate with a standardized secret management system/convention.
 
 ## CLI
